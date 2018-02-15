@@ -1,8 +1,8 @@
-const { removeDB, createDB, importFromFile, get, countLines, readFile, query } = require('../index')
+const { removeDB, createDB, importFromFile, get, countLines, readFile } = require('../index')
 const path = require('path')
 
 const dbFilePath = path.join(__dirname, 'data/test-perf.sqlite')
-// const csvFilePath = path.join(__dirname, 'data/500000_sales.csv')
+const csvFilePath = path.join(__dirname, 'data/500000_sales.csv')
 // const csvFilePath = path.join(__dirname, 'data/CivilWarMemorials.csv')
 
 const run = async () => {

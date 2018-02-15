@@ -1,4 +1,4 @@
-const { createDB, removeDB, createTable, query, removeTable } = require('../index')
+const { createDB, removeDB, createTable, prepare, removeTable } = require('../index')
 const path = require('path')
 const fs = require('fs')
 
@@ -37,7 +37,7 @@ describe('sqlite related functionality', () => {
     
         test('can create a new table with an array of strings as schema definition with no type information', async () => {
             const table = await createTable(dbFilePath, tableName, columns)
-            const tableInfo = await query(dbFilePath, `PRAGMA table_info(${tableName});`)
+            const tableInfo = await prepare(dbFilePath, `PRAGMA table_info(${tableName});`)
 
             tableInfo.forEach((col, i) => {
                 if (i === 0) return // ignore primary key column
@@ -47,7 +47,7 @@ describe('sqlite related functionality', () => {
 
         test('can remove a table by name', async () => {
             const remove = removeTable(dbFilePath, tableName)
-            const tableInfo = await query(dbFilePath, `PRAGMA table_info(${tableName});`)
+            const tableInfo = await prepare(dbFilePath, `PRAGMA table_info(${tableName});`)
             
             expect(tableInfo).toEqual([])
         })

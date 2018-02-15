@@ -114,15 +114,15 @@ module.exports.removeTable = function(dbPath, tableName) {
 }
 
 // execute a query and return all results on a db file
-module.exports.query = function(dbPath, query) {
+module.exports.prepare = function(dbPath, query, bindings = []) {
     const db = new Database(dbPath)
-    return db.prepare(query).all()
+    return db.prepare(query).all(bindings)
 }
 
 // execute a query and return the first row
-module.exports.get = function(dbPath, query) {
+module.exports.get = function(dbPath, query, bindings = []) {
     const db = new Database(dbPath)
-    return db.prepare(query).get()
+    return db.prepare(query).get(bindings)
 }
 
 // import a file into a new or existing table
