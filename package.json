@@ -1,0 +1,22 @@
+{
+  "name": "csv-sqlite",
+  "version": "0.1.0",
+  "description": "Utilities for working with CSV files and SQLite",
+  "main": "index.js",
+  "author": "Patrick DeVivo <patrick@augmentable.io>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "better-sqlite3": "^4.1.0",
+    "csvtojson": "^1.1.9",
+    "knex": "^0.14.3",
+    "lodash": "^4.17.5",
+    "md5-file": "^3.2.3"
+  },
+  "devDependencies": {
+    "jest": "^22.2.2"
+  },
+  "scripts": {
+    "test": "jest --verbose --watch"
+  }
+}
