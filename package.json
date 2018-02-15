@@ -4,6 +4,7 @@
   "description": "Utilities for working with CSV files and SQLite",
   "main": "index.js",
   "author": "Patrick DeVivo <patrick@augmentable.io>",
+  "repository": "https://github.com/augmentable-opensource/csv-sqlite",
   "license": "MIT",
   "private": false,
   "dependencies": {
