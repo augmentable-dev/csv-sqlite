@@ -1,6 +1,6 @@
 {
   "name": "csv-sqlite",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Utilities for working with CSV files and SQLite",
   "main": "index.js",
   "author": "Patrick DeVivo <patrick@augmentable.io>",

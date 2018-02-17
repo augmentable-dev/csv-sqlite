@@ -81,9 +81,7 @@ module.exports.getLines = function(startLineIndex, numLines, filePath) {
 
 // create a db file at a specified path
 module.exports.createDB = function(dbPath) {
-    return new Promise((resolve) => {
-        resolve(new Database(dbPath))
-    })
+    return new Database(dbPath)
 }
 
 // remove a db file at a specified path
@@ -123,6 +121,12 @@ module.exports.prepare = function(dbPath, query, bindings = []) {
 module.exports.get = function(dbPath, query, bindings = []) {
     const db = new Database(dbPath)
     return db.prepare(query).get(bindings)
+}
+
+// execute a query and return the first row
+module.exports.iterate = function(dbPath, query, bindings = []) {
+    const db = new Database(dbPath)
+    return db.prepare(query).iterate(bindings)
 }
 
 // import a file into a new or existing table
