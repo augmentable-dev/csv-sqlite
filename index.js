@@ -94,7 +94,7 @@ module.exports.removeDB = function(dbPath) {
 
 // create a table in a db file, with a column defintion specified as an array of strings
 module.exports.createTable = function(dbPath, tableName, columns) {
-    const db = new Database(dbPath)
+    const db = new Database(dbPath, {fileMustExist: true})
     const sql = knex.schema.createTable(tableName, table => {
         table.increments('_row_index')
         columns.forEach(c => {
@@ -106,26 +106,26 @@ module.exports.createTable = function(dbPath, tableName, columns) {
 
 // drop a table from a db file
 module.exports.removeTable = function(dbPath, tableName) {
-    const db = new Database(dbPath)
+    const db = new Database(dbPath, {fileMustExist: true})
     const sql = knex.schema.dropTableIfExists(tableName).toString()
     return db.prepare(sql).run()
 }
 
 // execute a query and return all results on a db file
 module.exports.prepare = function(dbPath, query, bindings = []) {
-    const db = new Database(dbPath)
+    const db = new Database(dbPath, {fileMustExist: true})
     return db.prepare(query).all(bindings)
 }
 
 // execute a query and return the first row
 module.exports.get = function(dbPath, query, bindings = []) {
-    const db = new Database(dbPath)
+    const db = new Database(dbPath, {fileMustExist: true})
     return db.prepare(query).get(bindings)
 }
 
 // execute a query and return the first row
 module.exports.iterate = function(dbPath, query, bindings = []) {
-    const db = new Database(dbPath)
+    const db = new Database(dbPath, {fileMustExist: true})
     return db.prepare(query).iterate(bindings)
 }
 
@@ -149,7 +149,7 @@ module.exports.importFromFile = async function(dbPath, filePath, tableName = pat
     await module.exports.createTable(dbPath, tableName, columns)
 
     return new Promise((resolve, reject) => {
-        const db = new Database(dbPath)
+        const db = new Database(dbPath, {fileMustExist: true})
         db.prepare('BEGIN').run()
         let batch = []
 
