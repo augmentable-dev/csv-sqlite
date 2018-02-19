@@ -129,6 +129,11 @@ module.exports.iterate = function(dbPath, query, bindings = []) {
     return db.prepare(query).iterate(bindings)
 }
 
+module.exports.run = function(dbPath, query, bindings = []) {
+    const db = new Database(dbPath, {fileMustExist: true})
+    return db.prepare(query).run(bindings)
+}
+
 // import a file into a new or existing table
 // if a table with tableName doesn't exist, a new table will be created
 // if a table with tableName exists, try to import into that table
