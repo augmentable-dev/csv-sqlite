@@ -100,8 +100,15 @@ module.exports.createTable = function(dbPath, tableName, columns) {
         columns.forEach(c => {
             table.string(c)
         })
-    }).toString()
-    return db.prepare(sql).run()
+    }).toSQL()[0]
+    return db.prepare(sql.sql).run(sql.bindings)
+}
+
+// check if a table already exists
+module.exports.tableExists = function(dbPath, tableName) {
+    const db = new Database(dbPath, {fileMustExist: true})
+    const sql = knex.schema.hasTable(tableName).toSQL()[0]
+    return db.prepare(sql.sql).get(sql.bindings)
 }
 
 // drop a table from a db file
@@ -151,7 +158,8 @@ module.exports.importFromFile = async function(dbPath, filePath, tableName = pat
 
     columns = columns.map(_.snakeCase)
 
-    await module.exports.createTable(dbPath, tableName, columns)
+    const tableExists = module.exports.tableExists(dbPath, tableName)
+    if (!tableExists) await module.exports.createTable(dbPath, tableName, columns)
 
     return new Promise((resolve, reject) => {
         const db = new Database(dbPath, {fileMustExist: true})
