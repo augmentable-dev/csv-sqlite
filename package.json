@@ -1,6 +1,6 @@
 {
   "name": "csv-sqlite",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Utilities for working with CSV files and SQLite",
   "main": "index.js",
   "author": "Patrick DeVivo <patrick@augmentable.io>",
@@ -18,6 +18,6 @@
     "jest": "^22.2.2"
   },
   "scripts": {
-    "test": "jest --verbose --watch"
+    "test": "jest --verbose --watch --coverage --coverageDirectory ./coverage"
   }
 }

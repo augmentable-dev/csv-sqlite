@@ -1,9 +1,18 @@
-const { getLine, getLines } = require('../index')
+const { fileStat, countLines, getLine, getLines } = require('../index')
 
 describe('file related functions', () => {
 
     const sales_500k = require.resolve('./data/500000_sales.csv')
 
+    test('returns some stats for a file', async () => {
+        const s = fileStat(sales_500k)
+        expect(s).toEqual(expect.anything())
+    })
+
+    test('count the lines in a file', async () => {
+        const lineCount = await countLines(sales_500k)
+        expect(lineCount).toBe(500000 + 1)
+    })
 
     test('get the correct line from a file', async () => {
         const line = await getLine(9, sales_500k)

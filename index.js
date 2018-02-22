@@ -130,22 +130,19 @@ module.exports.get = function(dbPath, query, bindings = []) {
     return db.prepare(query).get(bindings)
 }
 
-// execute a query and return the first row
+// execute a query and return an iterator
 module.exports.iterate = function(dbPath, query, bindings = []) {
     const db = new Database(dbPath, {fileMustExist: true})
     return db.prepare(query).iterate(bindings)
 }
 
+// run a query
 module.exports.run = function(dbPath, query, bindings = []) {
     const db = new Database(dbPath, {fileMustExist: true})
     return db.prepare(query).run(bindings)
 }
 
-// import a file into a new or existing table
-// if a table with tableName doesn't exist, a new table will be created
-// if a table with tableName exists, try to import into that table
-// headerSpecification can either be an integer (index of headerRow in file) or an array of column names (string) to use
-module.exports.importFromFile = async function(dbPath, filePath, tableName = path.basename(filePath), headerSpecification = 0, delimiter = 'auto') {
+module.exports.getColumnsFromHeaderSpecification = async function(filePath, headerSpecification = 0, delimiter = 'auto') {
     let columns
     if (Array.isArray(headerSpecification)) columns = headerSpecification
     if (Number.isInteger(headerSpecification)) {
@@ -157,7 +154,40 @@ module.exports.importFromFile = async function(dbPath, filePath, tableName = pat
     if (!columns) throw new Error("Invalid header specification, must either be an integer or an array of strings")
 
     columns = columns.map(_.snakeCase)
+    return columns
+}
 
+module.exports.getParsedLines = async function(filePath, startLineIndex, numLines, headerSpecification = 0, delimiter = 'auto') {
+    const columns = await module.exports.getColumnsFromHeaderSpecification(filePath, headerSpecification, delimiter)
+    return new Promise((resolve, reject) => {
+        let rows = []
+        let counter = 0
+        const parsing = csv({headers: columns, workerNum: os.cpus().length}) // TODO: only use workers if file size is large (or row count high)
+            .fromFile(filePath)
+            .on('csv', row => {
+                if (counter >= startLineIndex && counter <= startLineIndex + numLines) {
+                    rows.push(row)
+                }
+                else if (counter > startLineIndex + numLines) {
+                    parsing.emit('end', {done: true})
+                }
+                counter++
+            })
+            .on('error', error => {
+                reject(error)
+            })
+            .on('end', () => {
+                resolve(rows)
+            })
+    })
+}
+
+// import a file into a new or existing table
+// if a table with tableName doesn't exist, a new table will be created
+// if a table with tableName exists, try to import into that table
+// headerSpecification can either be an integer (index of headerRow in file) or an array of column names (string) to use
+module.exports.importFromFile = async function(dbPath, filePath, tableName = path.basename(filePath), headerSpecification = 0, delimiter = 'auto') {
+    const columns = await module.exports.getColumnsFromHeaderSpecification(filePath, headerSpecification, delimiter)
     const tableExists = module.exports.tableExists(dbPath, tableName)
     if (!tableExists) await module.exports.createTable(dbPath, tableName, columns)
 
@@ -168,7 +198,7 @@ module.exports.importFromFile = async function(dbPath, filePath, tableName = pat
 
         const batchSize = Math.floor(999 / columns.length)
         let statement = null
-        csv({headers: columns, workerNum: os.cpus().length}) // TODO: only use workers if file size is large (or row count high)
+        csv({headers: columns, workerNum: os.cpus().length, flatKeys:true}) // TODO: only use workers if file size is large (or row count high)
         .fromFile(filePath)
         .on('csv', row => {
             if (batch.length && ((batch.length % batchSize) === 0)) {

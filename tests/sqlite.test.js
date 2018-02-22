@@ -1,4 +1,4 @@
-const { createDB, removeDB, createTable, prepare, removeTable } = require('../index')
+const { createDB, removeDB, createTable, prepare, removeTable, run } = require('../index')
 const path = require('path')
 const fs = require('fs')
 
@@ -39,6 +39,15 @@ describe('sqlite related functionality', () => {
             const table = await createTable(dbFilePath, tableName, columns)
             const tableInfo = await prepare(dbFilePath, `PRAGMA table_info(${tableName});`)
 
+            tableInfo.forEach((col, i) => {
+                if (i === 0) return // ignore primary key column
+                expect(col.name).toBe(columns[i-1])
+            })
+        })
+
+        test('can copy a table', async () => {
+            const r = run(dbFilePath, `CREATE TABLE copied AS SELECT * FROM ${tableName} WHERE 0`)
+            const tableInfo = await prepare(dbFilePath, `PRAGMA table_info(copied);`)
             tableInfo.forEach((col, i) => {
                 if (i === 0) return // ignore primary key column
                 expect(col.name).toBe(columns[i-1])
