@@ -96,7 +96,6 @@ module.exports.removeDB = function(dbPath) {
 module.exports.createTable = function(dbPath, tableName, columns) {
     const db = new Database(dbPath, {fileMustExist: true})
     const sql = knex.schema.createTable(tableName, table => {
-        table.increments('_row_index')
         columns.forEach(c => {
             table.string(c)
         })

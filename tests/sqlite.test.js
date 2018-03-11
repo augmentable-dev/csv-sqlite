@@ -40,8 +40,7 @@ describe('sqlite related functionality', () => {
             const tableInfo = await prepare(dbFilePath, `PRAGMA table_info(${tableName});`)
 
             tableInfo.forEach((col, i) => {
-                if (i === 0) return // ignore primary key column
-                expect(col.name).toBe(columns[i-1])
+                expect(col.name).toBe(columns[i])
             })
         })
 
@@ -49,8 +48,7 @@ describe('sqlite related functionality', () => {
             const r = run(dbFilePath, `CREATE TABLE copied AS SELECT * FROM ${tableName} WHERE 0`)
             const tableInfo = await prepare(dbFilePath, `PRAGMA table_info(copied);`)
             tableInfo.forEach((col, i) => {
-                if (i === 0) return // ignore primary key column
-                expect(col.name).toBe(columns[i-1])
+                expect(col.name).toBe(columns[i])
             })
         })
 
