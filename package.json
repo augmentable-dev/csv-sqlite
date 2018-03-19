@@ -18,6 +18,7 @@
     "jest": "^22.2.2"
   },
   "scripts": {
-    "test": "jest --verbose --watch --coverage --coverageDirectory ./coverage"
+    "test": "jest --verbose --watch --coverage --coverageDirectory ./coverage",
+    "test-cli": "jest --verbose --coverage"
   }
 }
